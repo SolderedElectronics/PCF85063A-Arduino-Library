@@ -6,6 +6,6 @@ Used with Wire library for beautifly made [PCF85063A breakout](https://e-radioni
 
 Basic - set and print time
 
-Alarm - set alarm w. interrupt to wake up AVR from cpu_sleep()
+Alarm - set alarm with interrupt to wake up microcontroller from sleep
 
 Timer - Timer countown read
