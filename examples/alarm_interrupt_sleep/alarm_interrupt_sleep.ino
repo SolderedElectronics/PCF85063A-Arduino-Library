@@ -1,20 +1,23 @@
+#include <Wire.h>
 #include "PCF85063A.h"
-#include <avr/sleep.h>  
+#include <avr/sleep.h>
 
-PCF85063A rtc;
-  
-int wakePin = 2;                 // pin used for waking up  
+PCF85063A rtc(&Wire);
 
-void wakeUpNow() {  
-  sleep_disable();         // first thing after waking from sleep: disable sleep...  
-  detachInterrupt(0);      // disables interrupt 0 on pin 2 so the wakeUpNow code will not be executed during normal running time.  
-}  
-  
-void setup() {  
+int wakePin = 2;                 // pin used for waking up
+
+void wakeUpNow() {
+  sleep_disable();         // first thing after waking from sleep: disable sleep...
+  detachInterrupt(0);      // disables interrupt 0 on pin 2 so the wakeUpNow code will not be executed during normal running time.
+}
+
+void setup() {
   Serial.begin(115200);
-  
-  pinMode(wakePin, INPUT_PULLUP);  
-  pinMode(LED_BUILTIN, OUTPUT);     
+
+  Wire.begin();
+
+  pinMode(wakePin, INPUT_PULLUP);
+  pinMode(LED_BUILTIN, OUTPUT);
 
   //  setTime(hour, minute, sec);
   rtc.setTime(6, 54, 00);           // 24H mode, ex. 6:54:00
@@ -25,17 +28,17 @@ void setup() {
   checkAlarm();
 
   Serial.print("Now is:" );
-}   
-  
-void loop() {  
+}
+
+void loop() {
   printCurrentTime();
   Serial.println("Entering sleep mode in 1 second");
   delay(1000);
-  
+
   sleepNow();     // sleep function called here
-  
-  Serial.print("Interrupt triggered on: ");  
-}  
+
+  Serial.print("Interrupt triggered on: ");
+}
 
 void printCurrentTime() {
   switch( rtc.getWeekday() )
@@ -109,12 +112,12 @@ void checkAlarm() {
 }
 
 void sleepNow() {
-    sleep_enable();                         // enables the sleep bit in the mcucr register  
-    attachInterrupt(0,wakeUpNow, LOW);      // use interrupt 0 (pin 2) and run function 
-    set_sleep_mode(SLEEP_MODE_PWR_DOWN);    // sleep mode is set here  
-    digitalWrite(LED_BUILTIN, LOW); 
-    sleep_cpu();                            // activating sleep 
-     
+    sleep_enable();                         // enables the sleep bit in the mcucr register
+    attachInterrupt(0,wakeUpNow, LOW);      // use interrupt 0 (pin 2) and run function
+    set_sleep_mode(SLEEP_MODE_PWR_DOWN);    // sleep mode is set here
+    digitalWrite(LED_BUILTIN, LOW);
+    sleep_cpu();                            // activating sleep
+
     // THE PROGRAM CONTINUES FROM HERE AFTER WAKING UP
-    digitalWrite(LED_BUILTIN, HIGH);  
-} 
+    digitalWrite(LED_BUILTIN, HIGH);
+}
