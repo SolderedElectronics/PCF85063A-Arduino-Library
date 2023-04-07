@@ -1,21 +1,23 @@
+#include <Wire.h>
 #include "PCF85063A.h"
 
-PCF85063A rtc;
- 
-  
-void setup() {  
-  Serial.begin(115200);  
+PCF85063A rtc(&Wire);
+
+void setup() {
+  Serial.begin(115200);
+
+  Wire.begin();
 
   //  setTime(hour, minute, sec);
   rtc.setTime(6, 54, 00);           // 24H mode, ex. 6:54:00
   //  setDate(weekday, day, month, yr);
   rtc.setDate(6, 16, 5, 2020);      // 0 for Sunday, ex. Saturday, 16.5.2020.
-}   
-  
-void loop() {  
+}
+
+void loop() {
   printCurrentTime();
   delay(1000);
-}  
+}
 
 void printCurrentTime() {
   switch( rtc.getWeekday() )
